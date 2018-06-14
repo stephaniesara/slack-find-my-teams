@@ -1,0 +1,20 @@
+{
+  "name": "slack-find-my-teams",
+  "version": "1.0.0",
+  "description": "Implement Slack's Find My Workspace feature",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephaniesara/slack-find-my-teams.git"
+  },
+  "author": "Stephanie Sara Chong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephaniesara/slack-find-my-teams/issues"
+  },
+  "homepage": "https://github.com/stephaniesara/slack-find-my-teams#readme"
+}
