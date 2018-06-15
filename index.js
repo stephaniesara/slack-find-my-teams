@@ -1,3 +1,4 @@
+const Promise = require("bluebird");
 const { _getJoinedTeams, _getEligibleTeams } = require("./model");
 const { sortBy } = require("underscore");
 
@@ -13,28 +14,24 @@ class User {
     return true;
   }
 
-  _getTeams(cb) {
-    _getJoinedTeams(this.email, (err, joinedTeams) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      this.joinedTeams = joinedTeams;
-      // console.log(joinedTeams);
-
-      _getEligibleTeams(this.email, this.domain, (err, eligibleTeams) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        this.eligibleTeams = sortBy(eligibleTeams, "count").reverse();
-        // console.log(eligibleTeams);
-        cb();
-      });
+  _getTeams() {
+    return new Promise((res, rej) => {
+      _getJoinedTeams(this.email)
+        .then(joinedTeams => {
+          this.joinedTeams = joinedTeams;
+        })
+        .then(() => {
+          _getEligibleTeams(this.email, this.domain).then(eligibleTeams => {
+            this.eligibleTeams = sortBy(eligibleTeams, "count").reverse();
+            res("test");
+          });
+        })
+        .catch(err => rej(err));
     });
   }
 
-  _logOutput() {
+  _logOutput(str) {
+    console.log(str);
     console.log(this.joinedTeams);
     console.log(this.eligibleTeams);
   }
@@ -44,9 +41,9 @@ class User {
       console.log("error, not valid input");
       return;
     }
-    this._getTeams(() => {
-      this._logOutput();
-    });
+    this._getTeams()
+      .then(str => this._logOutput(str))
+      .catch(err => console.log(err));
   }
 }
 
