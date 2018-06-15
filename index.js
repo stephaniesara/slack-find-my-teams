@@ -1,5 +1,5 @@
-const model = require("./model");
-const _ = require("underscore");
+const { _getJoinedTeams, _getEligibleTeams } = require("./model");
+const { sortBy } = require("underscore");
 
 class User {
   constructor(email) {
@@ -8,43 +8,45 @@ class User {
   }
 
   _isValidInput() {
+    // TODO
     this.domain = "qa.com";
     return true;
   }
 
-  _getTeams() {
-    model._getJoinedTeams(this.email, (err, result) => {
+  _getTeams(cb) {
+    _getJoinedTeams(this.email, (err, joinedTeams) => {
       if (err) {
         console.log(err);
         return;
       }
-      console.log(result);
+      this.joinedTeams = joinedTeams;
+      // console.log(joinedTeams);
 
-      model._getEligibleTeams(this.email, this.domain, (err, result) => {
+      _getEligibleTeams(this.email, this.domain, (err, eligibleTeams) => {
         if (err) {
           console.log(err);
           return;
         }
-        result.sort((a, b) => {
-          if (a[2] > b[2]) {
-            return -1;
-          }
-          if (a[2] < b[2]) {
-            return 1;
-          }
-          return 0;
-        });
-        console.log(result);
+        this.eligibleTeams = sortBy(eligibleTeams, "count").reverse();
+        // console.log(eligibleTeams);
+        cb();
       });
     });
   }
 
+  _logOutput() {
+    console.log(this.joinedTeams);
+    console.log(this.eligibleTeams);
+  }
+
   findMyTeams() {
     if (!this._isValidInput()) {
-      console.log("error, input not valid");
+      console.log("error, not valid input");
       return;
     }
-    this._getTeams();
+    this._getTeams(() => {
+      this._logOutput();
+    });
   }
 }
 

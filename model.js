@@ -32,7 +32,12 @@ class userModel {
         query = "SELECT count(*) from users where team_id = ?";
         db.get(query, [team.id], (err, newResult) => {
           // console.log(team.id, newResult);
-          teams.push([team.name, team.id, newResult["count(*)"]]);
+          let obj = {
+            name: team.name,
+            id: team.id,
+            count: newResult["count(*)"]
+          };
+          teams.push(obj);
           if (teams.length === numTeams) {
             cb(null, teams);
           }
