@@ -44,8 +44,12 @@ class User {
     console.log("\n" + header);
     teams.forEach(team => {
       let line = `${team.name} (${team.id})`;
+      // add member count for eligible teams only
       if (hasCount) {
-        line += `\t ${team.count} members`;
+        line +=
+          team.count === 1
+            ? `\t ${team.count} member`
+            : `\t ${team.count} members`;
       }
       console.log(line);
     });
