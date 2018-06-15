@@ -1,14 +1,11 @@
 const program = require("commander");
 const { validate } = require("email-validator");
 const { getJoinedTeams, getEligibleTeams } = require("./model");
-const prompt = require("prompt");
 
 class User {
   constructor(email) {
     this.email = email;
     this.domain = "";
-    this.joined = [];
-    this.eligible = [];
   }
 
   _isValidInput() {
@@ -28,11 +25,9 @@ class User {
           "That email does not exist in our system, please try again!"
         );
       }
-      this.joined = joined;
       getEligibleTeams(this.email, this.domain, (err, eligible) => {
         if (err) return console.log(err);
-        this.eligible = eligible;
-        cb();
+        cb(joined, eligible);
       });
     });
   }
@@ -48,24 +43,27 @@ class User {
     });
   }
 
-  _logOutput() {
-    this._logTeams("✨ You are a member of:", this.joined, false);
-    this._logTeams("✨ You are eligible to join:", this.eligible, true);
+  _logOutput(joined, eligible) {
+    this._logTeams("✨ You are a member of:", joined, false);
+    this._logTeams("✨ You are eligible to join:", eligible, true);
   }
 
   findMyTeams() {
     if (!this._isValidInput()) {
       return console.log("That is not a valid email, please try again!");
     }
-    this._getTeams(() => {
-      this._logOutput();
+    this._getTeams((joined, eligible) => {
+      this._logOutput(joined, eligible);
     });
   }
 }
 
-// Program starts here.
+// Program starts here ->
 program.option("<email>").action(email => {
   const user = new User(email);
   user.findMyTeams();
 });
 program.parse(process.argv);
+
+// For testing methods in spec.js
+module.exports = User;
