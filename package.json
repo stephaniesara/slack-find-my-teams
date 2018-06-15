@@ -18,8 +18,12 @@
   },
   "homepage": "https://github.com/stephaniesara/slack-find-my-teams#readme",
   "dependencies": {
-    "bluebird": "^3.5.1",
+    "commander": "^2.15.1",
+    "email-validator": "^2.0.4",
     "sqlite3": "^4.0.0",
     "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0"
   }
 }

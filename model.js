@@ -1,52 +1,34 @@
-const Promise = require("bluebird");
 const db = require("./db");
+const { sortBy } = require("underscore");
 
 class UserModel {
-  _getJoinedTeams(email) {
-    return new Promise((res, rej) => {
-      let query =
-        "SELECT teams.name, teams.id FROM users INNER JOIN teams\
+  getJoinedTeams(email, cb) {
+    const query =
+      "SELECT teams.name, teams.id FROM teams INNER JOIN users\
       WHERE users.email = ? and teams.id = users.team_id";
-      db.all(query, [email], (err, rows) => {
-        if (err) {
-          rej(err);
-        }
-        res(rows);
-      });
+    db.all(query, [email], (err, rows) => {
+      cb(err, rows);
     });
   }
 
-  _getEligibleTeams(email, domain) {
-    return new Promise((res, rej) => {
-      let query =
-        "SELECT name, id FROM teams WHERE email_domain like ?\
+  getEligibleTeams(email, domain, cb) {
+    let query =
+      "SELECT name, id FROM teams WHERE email_domain like ?\
       AND id not in (SELECT team_id FROM users WHERE email = ?)";
+    db.all(query, [domain, email], (err, rows) => {
+      if (err) return cb(err, null);
+      let numRows = rows.length;
+      let count = 0;
 
-      db.all(query, [domain, email], (err, result) => {
-        if (err) {
-          rej(err);
-        }
-        let numTeams = result.length;
-        let teams = [];
-        let count = 0;
-
-        result.forEach(team => {
-          query = "SELECT count(*) from users where team_id = ?";
-          db.get(query, [team.id], (err, newResult) => {
-            if (err) {
-              return cb(err, null);
-            }
-            let obj = {
-              name: team.name,
-              id: team.id,
-              count: newResult["count(*)"]
-            };
-            teams.push(obj);
-            count++;
-            if (count === numTeams) {
-              res(teams);
-            }
-          });
+      rows.forEach(row => {
+        query = "SELECT count(*) from users where team_id = ?";
+        db.get(query, [row.id], (err, result) => {
+          if (err) return cb(err, null);
+          row.count = result["count(*)"];
+          count++;
+          if (count === numRows) {
+            cb(null, sortBy(rows, "count").reverse());
+          }
         });
       });
     });
