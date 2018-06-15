@@ -26,30 +26,32 @@ Although this program is not very useful on its own, it could be refactored into
 
 ## Technologies
 
-- Node https://nodejs.org/en/
-- Underscore (additional functional methods) http://underscorejs.org/
-- Commander (command line interaction) https://github.com/tj/commander.js/
-- Email-validator https://www.npmjs.com/package/email-validator
-- Jest (unit testing) https://facebook.github.io/jest/
+- Node: https://nodejs.org/en/
+- Underscore (additional functional methods): http://underscorejs.org/
+- Commander (command line interaction): https://github.com/tj/commander.js/
+- Email-validator: https://www.npmjs.com/package/email-validator
+- Jest (unit testing): https://facebook.github.io/jest/
 
 ## Examples
+
+Check out daffy_duck's workspaces!
 
 ```sh
 $ node index.js daffy_duck@qa.com
 ```
 
-    ✨ You are a member of:
+     ✨ You are a member of:
 
-    qa-efla9j2t9jiyjkghnp (8476817264)
-    qa-707b996f6c27793e23 (8476809328)
+      qa-efla9j2t9jiyjkghnp (8476817264)
+      qa-707b996f6c27793e23 (8476809328)
 
-    ✨ You are eligible to join:
-    qa-a31ec0d8929183e19d (8476929792) 2 members
-    qa-a4d8c5b04c0eb04185 (8476888864) 2 members
-    ...
-    ... (27 teams total)
-    ...
-    qa-e6e79ada5579646db6 (8462390449) 0 members
+      ✨ You are eligible to join:
+      qa-a31ec0d8929183e19d (8476929792) 2 members
+      qa-a4d8c5b04c0eb04185 (8476888864) 2 members
+      ...
+      ... (27 teams total)
+      ...
+      qa-e6e79ada5579646db6 (8462390449) 0 members
 
 For additional help:
 
