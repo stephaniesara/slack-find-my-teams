@@ -2,36 +2,45 @@ const program = require("commander");
 const { validate } = require("email-validator");
 const { getJoinedTeams, getEligibleTeams } = require("./model");
 
+// Initialize user with email
 class User {
   constructor(email) {
     this.email = email;
     this.domain = "";
+    this.joined = []; // teams the user already joined
+    this.eligible = []; // teams the user could join
   }
 
+  // If input is email address, returns true and assigns domain to user
   _isValidInput() {
     if (!validate(this.email)) {
       return false;
     }
-    const indexOfAt = this.email.indexOf("@");
+    const indexOfAt = this.email.indexOf("@"); // index of @ symbol
     this.domain = this.email.substring(indexOfAt + 1);
     return true;
   }
 
+  // Makes asynchronous calls for data specifying teams the user has joined & can join
   _getTeams(cb) {
     getJoinedTeams(this.email, (err, joined) => {
       if (err) return console.log(err);
+      // if email not found in database, return immmediately
       if (joined.length === 0) {
         return console.log(
-          "That email does not exist in our system, please try again!"
+          "Email does not exist in our system, please try again!"
         );
       }
+      this.joined = joined;
       getEligibleTeams(this.email, this.domain, (err, eligible) => {
         if (err) return console.log(err);
-        cb(joined, eligible);
+        this.eligible = eligible;
+        cb();
       });
     });
   }
 
+  // Helper function to print values from list of teams
   _logTeams(header, teams, hasCount) {
     console.log("\n" + header);
     teams.forEach(team => {
@@ -43,27 +52,30 @@ class User {
     });
   }
 
-  _logOutput(joined, eligible) {
-    this._logTeams("✨ You are a member of:", joined, false);
-    this._logTeams("✨ You are eligible to join:", eligible, true);
+  // Main print function
+  _logOutput() {
+    this._logTeams("✨ You are a member of:", this.joined, false);
+    this._logTeams("✨ You are eligible to join:", this.eligible, true);
   }
 
+  // Main application function
   findMyTeams() {
     if (!this._isValidInput()) {
-      return console.log("That is not a valid email, please try again!");
+      return console.log("Not a valid email, please try again!");
     }
-    this._getTeams((joined, eligible) => {
-      this._logOutput(joined, eligible);
+    // First get both lists of teams, then log both
+    this._getTeams(() => {
+      this._logOutput();
     });
   }
 }
 
-// Program starts here ->
+// Start here ->
 program.option("<email>").action(email => {
   const user = new User(email);
   user.findMyTeams();
 });
 program.parse(process.argv);
 
-// For testing methods in spec.js
+// For testing in spec.js
 module.exports = User;

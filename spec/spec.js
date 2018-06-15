@@ -12,32 +12,11 @@ describe("Identifies invalid input email", () => {
 });
 
 describe("Works for valid input email", () => {
-  test("count joined and eligible teams", done => {
-    const callback = (joined, eligible) => {
-      expect(joined.length).toEqual(2);
-      expect(eligible.length).toEqual(27);
-      done();
-    };
-    testUser = new User("daffy_duck@qa.com");
-    testUser.domain = "qa.com";
-    testUser._getTeams(callback);
-  });
-
-  test("count members on eligible teams", done => {
-    const callback = (joined, eligible) => {
-      expect(eligible[0].count).toEqual(6);
-      done();
-    };
-    testUser = new User("donkey_kong@forest.com");
-    testUser.domain = "forest.com";
-    testUser._getTeams(callback);
-  });
-
-  test("correct shape of result data", done => {
-    const callback = (joined, eligible) => {
-      expect(joined[0]).toHaveProperty("id");
-      expect(eligible[0]).toHaveProperty("id");
-      expect(eligible[0]).toHaveProperty("count");
+  test("result data has correct shape", done => {
+    const callback = () => {
+      expect(testUser.joined[0]).toHaveProperty("id");
+      expect(testUser.eligible[0]).toHaveProperty("id");
+      expect(testUser.eligible[0]).toHaveProperty("count");
       done();
     };
     testUser = new User("QqkyXxw48XKNaIzk@example.com");
@@ -45,10 +24,31 @@ describe("Works for valid input email", () => {
     testUser._getTeams(callback);
   });
 
+  test("correctly count joined and eligible teams", done => {
+    const callback = () => {
+      expect(testUser.joined.length).toEqual(2);
+      expect(testUser.eligible.length).toEqual(27);
+      done();
+    };
+    testUser = new User("daffy_duck@qa.com");
+    testUser.domain = "qa.com";
+    testUser._getTeams(callback);
+  });
+
+  test("correctly count members on eligible teams", done => {
+    const callback = () => {
+      expect(testUser.eligible[0].count).toEqual(6);
+      done();
+    };
+    testUser = new User("donkey_kong@forest.com");
+    testUser.domain = "forest.com";
+    testUser._getTeams(callback);
+  });
+
   test("eligible teams are in desc order", done => {
-    const callback = (joined, eligible) => {
-      expect(eligible[0].count).toBeGreaterThanOrEqual(
-        eligible[eligible.length - 1].count
+    const callback = () => {
+      expect(testUser.eligible[0].count).toBeGreaterThanOrEqual(
+        testUser.eligible[testUser.eligible.length - 1].count
       );
       done();
     };

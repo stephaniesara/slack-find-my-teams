@@ -2,6 +2,7 @@ const db = require("./db");
 const { sortBy } = require("underscore");
 
 class UserModel {
+  // Get a list of teams the user has already joined
   getJoinedTeams(email, cb) {
     const query =
       "SELECT teams.name, teams.id FROM teams INNER JOIN users\
@@ -11,6 +12,7 @@ class UserModel {
     });
   }
 
+  // Get a list of teams the user is eligible to join & hasn't joined
   getEligibleTeams(email, domain, cb) {
     let query =
       "SELECT name, id FROM teams WHERE email_domain like ?\
@@ -20,6 +22,10 @@ class UserModel {
       let numRows = rows.length;
       let count = 0;
 
+      // Count members for each team
+      // For better performance, store this info in aggregate table in database
+      // When might this be a good idea? If db use cases are more read-heavy vs. write-heavy
+      // Example db schema: id, count
       rows.forEach(row => {
         query = "SELECT count(*) from users where team_id = ?";
         db.get(query, [row.id], (err, result) => {
