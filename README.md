@@ -7,26 +7,22 @@
 
 ## Motivation
 
-Because this is a useful user-facing feature, especially in occasional moments of forgetfulness!
+Because this is helpful user-facing feature, especially in occasional moments of forgetfulness!
 
 ## Instructions
 
-1.  Install dependencies using npm install
-2.  Run tests using npm test
+1.  Install dependencies using `npm install`
+2.  Run tests using `npm test`
 3.  Experiment with sample input (see examples below)
 4.  Enjoy and profit!
 
 ## Table of Contents
 
-1.  [Usage](#Usage)
-2.  [Technologies](#technologies)
+1.  [Technologies](#technologies)
+2.  [Development](#development)
 3.  [Examples](#examples)
 4.  [Testing](#testing)
 5.  [Limitations](#limitations)
-
-## Usage
-
-Although this program is not too useful on its own, it could be refactored into an API that allows other developers to use its functionality.
 
 ## Technologies
 
@@ -35,6 +31,14 @@ Although this program is not too useful on its own, it could be refactored into 
 - Commander (command line interaction): https://github.com/tj/commander.js/
 - Email-validator: https://www.npmjs.com/package/email-validator
 - Jest (unit testing): https://facebook.github.io/jest/
+
+## Development
+
+From the root directory:
+
+```sh
+$ npm install
+```
 
 ## Examples
 
@@ -82,7 +86,7 @@ $ npm test
 
 ## Limitations
 
-As the app is currently designed, it is not built for scale. For example, if a user is eligible for many many teams, performance could become slow. The reason is because for every eligible team, the program makes one additional database query. That could add up to a lot of queries! A better strategy would be to pre-compute the member counts for each team in advance (perhaps on a regularly scheduled worker) and store that information as an aggregate table in persistent database storage. Though, this is of course not without tradeoffs (extra storage, non-real-time count accuracy).
+As the app is currently designed, it is not built for scale. For example, if a user is eligible for **many many** teams, performance could become slow. The reason is because for every eligible team, the program makes one additional database query. That could add up to a lot of queries! One workaround is to pre-compute the member counts for each team (perhaps on a regularly scheduled worker) and store that information as an aggregate table in persistent database storage. Though, this is of course not without tradeoffs (extra storage, non-real-time count accuracy).
 
 It might be designed as so:
 
