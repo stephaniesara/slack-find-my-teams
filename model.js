@@ -22,10 +22,11 @@ class UserModel {
       let numRows = rows.length;
       let count = 0;
 
-      // Count members for each team
+      // Count members for each eligible team
       // For better performance, store this info in aggregate table in database
       // When might this be a good idea? If db use cases are more read-heavy vs. write-heavy
-      // Example db schema: id, count
+      // Example database schema: id, count
+      // See README for more detail
       rows.forEach(row => {
         query = "SELECT count(*) from users where team_id = ?";
         db.get(query, [row.id], (err, result) => {

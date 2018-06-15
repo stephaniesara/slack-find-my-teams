@@ -2,7 +2,6 @@ const program = require("commander");
 const { validate } = require("email-validator");
 const { getJoinedTeams, getEligibleTeams } = require("./model");
 
-// Initialize user with email
 class User {
   constructor(email) {
     this.email = email;
@@ -21,11 +20,11 @@ class User {
     return true;
   }
 
-  // Makes asynchronous calls for data specifying teams the user has joined & can join
+  // Makes asynchronous calls to helper model methods
   _getTeams(cb) {
     getJoinedTeams(this.email, (err, joined) => {
       if (err) return console.log(err);
-      // if email not found in database, return immmediately
+      // if email is not in database, return immmediately
       if (joined.length === 0) {
         return console.log(
           "Email does not exist in our system, please try again!"
@@ -63,7 +62,6 @@ class User {
     if (!this._isValidInput()) {
       return console.log("Not a valid email, please try again!");
     }
-    // First get both lists of teams, then log both
     this._getTeams(() => {
       this._logOutput();
     });
