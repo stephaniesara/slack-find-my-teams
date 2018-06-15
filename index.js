@@ -5,8 +5,6 @@ class User {
   constructor(email) {
     this.email = email;
     this.domain = "";
-    // this.joinedTeams = [];
-    // this.eligibleTeams = [];
   }
 
   _isValidInput() {
@@ -14,52 +12,31 @@ class User {
     return true;
   }
 
-  _getTeams(cb) {
-    model._getTeams(this.email, this.domain, (err, result) => {
+  _getTeams() {
+    model._getJoinedTeams(this.email, (err, result) => {
       if (err) {
         console.log(err);
         return;
       }
-      cb(result);
+      console.log(result);
+
+      model._getEligibleTeams(this.email, this.domain, (err, result) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        result.sort((a, b) => {
+          if (a[2] > b[2]) {
+            return -1;
+          }
+          if (a[2] < b[2]) {
+            return 1;
+          }
+          return 0;
+        });
+        console.log(result);
+      });
     });
-    // model._getJoinedTeams(this.email, (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //     return;
-    //   }
-    //   this.joinedTeams = result;
-    //   cb();
-    // });
-  }
-
-  // _getEligibleTeams(cb) {
-  //   let joinedTeamsArr = _.map(this.joinedTeams, team => {
-  //     return { team_id: team.id };
-  //   });
-  //   model._getEligibleTeams(
-  //     this.domain,
-  //     this.email,
-  //     joinedTeamsArr,
-  //     (err, result) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return;
-  //       }
-  //       this.eligibleTeams = result;
-  //       cb();
-  //     }
-  //   );
-  // }
-
-  _logOutput(joinedTeams, eligibleTeams) {
-    console.log("✨ You are a member of:");
-    // joinedTeams.forEach(team => {
-    //   console.log(team.name + " (" + team.id + ")");
-    // });
-    console.log("\n✨ You are eligible to join:");
-    // eligibleTeams.forEach(team => {
-    //   console.log(team);
-    // });
   }
 
   findMyTeams() {
@@ -67,9 +44,7 @@ class User {
       console.log("error, input not valid");
       return;
     }
-    this._getTeams(result => {
-      this._logOutput(result);
-    });
+    this._getTeams();
   }
 }
 
