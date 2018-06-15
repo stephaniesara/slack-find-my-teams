@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stephaniesara/slack-find-my-teams.git"
+    "url": ""
   },
-  "author": "Stephanie Sara Chong",
+  "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/stephaniesara/slack-find-my-teams/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/stephaniesara/slack-find-my-teams#readme",
+  "homepage": "",
   "dependencies": {
     "commander": "^2.15.1",
     "email-validator": "^2.0.4",
