@@ -1,6 +1,7 @@
 const program = require("commander");
 const { validate } = require("email-validator");
 const { getJoinedTeams, getEligibleTeams } = require("./model");
+const Promise = require('bluebird');
 
 class User {
   constructor(email) {
@@ -19,24 +20,76 @@ class User {
     this.domain = this.email.substring(indexOfAt + 1);
     return true;
   }
+  
+//   rows = [thing1, thing2,...] // array with data to query on
+//   return Promise.map(rows, asyncFunction); // where function returns a Promise (in this case, promisified query function returns a promise)
+
+//   let promises = [];
+//   rows.forEach(row, () => {
+//     promises.push(asyncFunction(row));
+//   });
+//   return Promise.all(promises);
+
+
+  // // implement Promise.all
+  // Promise.all = promises => {
+  //   return new Promise((res, rej) => {
+  //     let count = 0;
+  //     let returnedPromises = [];
+  //     promises.forEach((promise, i) => {
+  //       promise.then(result => {
+  //         returnedPromises[i] = result;
+  //         if (++count === promises.length) {
+  //           res(returnedPromises);
+  //         }
+  //       })
+  //       .catch(err => {
+  //         rej(err);
+  //       });
+  //     });
+  //   });
+  // }
+  
+// Promise.map = (array, promiseReturningFunction) => {
+//   return new Promise((res, rej) => {
+//     let promises = [];
+//     let count = 0;
+//     array.forEach((entry, i) => {
+//       promiseReturningFunction(entry).then(result => {
+//         // this is what's different from Promise.all
+//         // instead of simply chaining promise.then, you call the promiseFunc and then chain .then
+//         promises[i] = result;
+//         if (++count === array.length) {
+//           res(promises);
+//         }
+//       });;
+//     });
+    
+//   });
+// };
+
 
   // Makes asynchronous calls to helper model methods
   _getTeams(cb) {
-    getJoinedTeams(this.email, (err, joined) => {
-      if (err) return console.log(err);
-      // if email is not in database, return immmediately
-      if (joined.length === 0) {
-        return console.log(
-          "Email does not exist in our system, please try again!"
-        );
-      }
-      this.joined = joined;
-      getEligibleTeams(this.email, this.domain, (err, eligible) => {
-        if (err) return console.log(err);
-        this.eligible = eligible;
-        cb();
+    const joinedPromise = getJoinedTeams(this.email)
+      .then(joined => {
+        if (joined.length === 0) {
+          console.log("Email does not exist in our system, please try again!");
+          return;
+        }
+        this.joined = joined;
+      })
+      .catch(err => {
+        return err;
       });
-    });
+    const eligiblePromise = getEligibleTeams(this.email, this.domain)
+      .then(eligible => {
+        this.eligible = eligible;
+      })
+      .catch(err => {
+        return err;
+      });
+    return Promise.all([joinedPromise, eligiblePromise]);
   }
 
   // Helper function to print values from list of teams
@@ -66,9 +119,12 @@ class User {
     if (!this._isValidInput()) {
       return console.log("Not a valid email, please try again!");
     }
-    this._getTeams(() => {
-      this._logOutput();
-    });
+    // this._getTeams(() => {
+    //   this._logOutput();
+    // });
+    
+    this._getTeams()
+      .then(() => this._logOutput());
   }
 }
 
